@@ -1,0 +1,12 @@
+# Personal notes - not part of the project
+SOCIAL_POSTS*.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
