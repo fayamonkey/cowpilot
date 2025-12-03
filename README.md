@@ -16,6 +16,8 @@ Built because we needed something more reliable than existing AI copilots. CowPi
 
 - **📸 Automatic Screenshots** — Every message includes a screenshot of your current tab
 - **🤖 Multi-Model Support** — Choose from 50+ vision AI models via OpenRouter
+- **🎭 5 Personality Modes** — Tutor, AI Professor, Code Reviewer, Creative Partner, Debug Detective
+- **⚡ Fully Customizable** — Edit prompts or write your own from scratch
 - **💬 Contextual Memory** — Full conversation history with screenshot context
 - **💰 Live Pricing** — See real-time costs per model before you choose
 - **🔒 Privacy First** — Everything stays in your browser, your API key stays private
@@ -63,6 +65,21 @@ Open `generate-icons.html` in your browser to create custom cow-themed icons.
 - "How do I fill out this form?"
 - "Can you explain what this code does?"
 - "Help me navigate this UI"
+
+## 🎭 Personality Modes
+
+Click the 🎭 button to choose a personality:
+
+| Mode | Best For |
+|------|----------|
+| 📚 **Tutor** | General help, concise answers |
+| 🎓 **AI Professor** | Deep AI knowledge, academic explanations |
+| 💻 **Code Reviewer** | Code analysis, best practices |
+| 🎨 **Creative Partner** | Brainstorming, ideas, writing |
+| 🔍 **Debug Detective** | Systematic bug hunting |
+| ⚡ **Custom** | Your own prompt, full control |
+
+All prompts are fully transparent and editable!
 
 ## 🤖 Supported Models
 
