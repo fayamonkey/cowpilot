@@ -26,7 +26,7 @@ Built because we needed something more reliable than existing AI copilots. CowPi
 ### 1. Download or Clone
 
 ```bash
-git clone https://github.com/dirkwonhoefer/cowpilot.git
+git clone https://github.com/fayamonkey/cowpilot.git
 ```
 
 Or download as ZIP and extract.
