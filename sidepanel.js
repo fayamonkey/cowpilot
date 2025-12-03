@@ -12,6 +12,7 @@ const loadingOverlay = document.getElementById('loadingOverlay');
 const modelBadge = document.getElementById('modelBadge');
 const currentModelSpan = document.getElementById('currentModel');
 const openSettingsBtn = document.getElementById('openSettings');
+const openCustomizeBtn = document.getElementById('openCustomize');
 const clearChatBtn = document.getElementById('clearChat');
 
 // ===== State =====
@@ -20,6 +21,7 @@ let settings = {
   apiKey: '',
   model: 'google/gemini-2.0-flash-001'
 };
+let activePrompt = ''; // Custom system prompt
 
 // ===== Init =====
 document.addEventListener('DOMContentLoaded', init);
@@ -27,6 +29,7 @@ document.addEventListener('DOMContentLoaded', init);
 async function init() {
   await loadSettings();
   await loadChatHistory();
+  await loadActivePrompt();
   setupEventListeners();
   updateModelBadge();
   renderChatHistory();
@@ -43,6 +46,18 @@ async function loadSettings() {
     if (stored.model) settings.model = stored.model;
   } catch (error) {
     console.error('Error loading settings:', error);
+  }
+}
+
+/**
+ * Load active prompt from Chrome storage
+ */
+async function loadActivePrompt() {
+  try {
+    const stored = await chrome.storage.local.get(['activePrompt']);
+    activePrompt = stored.activePrompt || '';
+  } catch (error) {
+    console.error('Error loading prompt:', error);
   }
 }
 
@@ -89,6 +104,10 @@ function setupEventListeners() {
   
   openSettingsBtn.addEventListener('click', () => {
     chrome.tabs.create({ url: chrome.runtime.getURL('settings.html') });
+  });
+  
+  openCustomizeBtn.addEventListener('click', () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL('customize.html') });
   });
   
   clearChatBtn.addEventListener('click', clearChat);
@@ -224,13 +243,8 @@ async function handleSend() {
   }
 }
 
-/**
- * Prepare messages for API (with system prompt)
- */
-function prepareMessagesForAPI() {
-  const systemMessage = {
-    role: 'system',
-    content: `You are CowPilot 🐄✈️ — a friendly, screen-aware AI co-pilot inside a Chrome extension.
+// Default system prompt
+const DEFAULT_PROMPT = `You are CowPilot 🐄✈️ — a friendly, screen-aware AI co-pilot inside a Chrome extension.
 
 CONTEXT:
 • Every user message includes a live screenshot of their current browser tab
@@ -255,7 +269,15 @@ NEVER:
 • Give vague or generic advice
 • Over-explain simple things
 
-You're a sharp, friendly tutor — guide users efficiently through whatever they're working on.`
+You're a sharp, friendly tutor — guide users efficiently through whatever they're working on.`;
+
+/**
+ * Prepare messages for API (with system prompt)
+ */
+function prepareMessagesForAPI() {
+  const systemMessage = {
+    role: 'system',
+    content: activePrompt || DEFAULT_PROMPT
   };
   
   const historyMessages = chatHistory.map(msg => {
@@ -477,6 +499,9 @@ chrome.storage.onChanged.addListener((changes) => {
   if (changes.model) {
     settings.model = changes.model.newValue || settings.model;
     updateModelBadge();
+  }
+  if (changes.activePrompt) {
+    activePrompt = changes.activePrompt.newValue || '';
   }
 });
 
