@@ -14,12 +14,13 @@
         <span class="logo-icon">🐄✈️</span>
         <div class="logo-text-container">
           <span class="logo-text">CowPilot</span>
-          <span class="logo-tagline">The Better Co-Pilot</span>
+          <span class="logo-tagline" id="tagline">The Better Co-Pilot</span>
         </div>
       </div>
       <div class="header-actions">
         <button id="clearChat" class="icon-btn" title="Clear chat">🗑️</button>
         <button id="openCustomize" class="icon-btn" title="Customize personality">🎭</button>
+        <button id="toggleLanguage" class="icon-btn" title="Language">🌐</button>
         <button id="openSettings" class="icon-btn" title="Settings">⚙️</button>
       </div>
     </header>
@@ -34,9 +35,9 @@
     <div class="chat-container" id="chatContainer">
       <div class="welcome-message" id="welcomeMessage">
         <div class="welcome-icon">🐄✈️</div>
-        <h2>Welcome to CowPilot!</h2>
-        <p>Your friendly AI co-pilot that sees your screen and helps you navigate anything.</p>
-        <p class="hint">🐄 First, click ⚙️ to add your OpenRouter API key!</p>
+        <h2 id="welcomeTitle">Welcome to CowPilot!</h2>
+        <p id="welcomeText">Your friendly AI co-pilot that sees your screen and helps you navigate anything.</p>
+        <p class="hint" id="welcomeHint">🐄 First, click ⚙️ to add your OpenRouter API key!</p>
         <img src="icons/cowpilot.png" alt="CowPilot" class="welcome-logo">
       </div>
     </div>
@@ -45,7 +46,7 @@
     <div class="input-area">
       <div class="screenshot-indicator" id="screenshotIndicator">
         <span class="screenshot-icon">📸</span>
-        <span>Screenshot included with each message</span>
+        <span id="screenshotText">Screenshot included with each message</span>
       </div>
       <div class="input-wrapper">
         <textarea 
@@ -63,10 +64,10 @@
   <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-spinner"></div>
-    <span>Capturing screenshot...</span>
+    <span id="loadingText">Capturing screenshot...</span>
   </div>
 
+  <script src="i18n.js"></script>
   <script src="sidepanel.js"></script>
 </body>
 </html>
-

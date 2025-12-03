@@ -14,6 +14,7 @@ const currentModelSpan = document.getElementById('currentModel');
 const openSettingsBtn = document.getElementById('openSettings');
 const openCustomizeBtn = document.getElementById('openCustomize');
 const clearChatBtn = document.getElementById('clearChat');
+const toggleLanguageBtn = document.getElementById('toggleLanguage');
 
 // ===== State =====
 let chatHistory = [];
@@ -27,6 +28,7 @@ let activePrompt = ''; // Custom system prompt
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
+  await loadLanguage(); // Load language first
   await loadSettings();
   await loadChatHistory();
   await loadActivePrompt();
@@ -34,6 +36,27 @@ async function init() {
   updateModelBadge();
   renderChatHistory();
   autoResizeTextarea();
+  applyTranslations();
+}
+
+/**
+ * Apply translations to UI elements
+ */
+function applyTranslations() {
+  document.getElementById('tagline').textContent = t('tagline');
+  document.getElementById('welcomeTitle').textContent = t('welcomeTitle');
+  document.getElementById('welcomeText').textContent = t('welcomeText');
+  document.getElementById('welcomeHint').textContent = t('welcomeHint');
+  document.getElementById('screenshotText').textContent = t('screenshotIncluded');
+  document.getElementById('messageInput').placeholder = t('askPlaceholder');
+  
+  // Update button titles
+  document.getElementById('clearChat').title = t('clearChat');
+  document.getElementById('openCustomize').title = t('customize');
+  document.getElementById('openSettings').title = t('settings');
+  document.getElementById('toggleLanguage').title = t('language');
+  
+  updateModelBadge();
 }
 
 /**
@@ -111,6 +134,23 @@ function setupEventListeners() {
   });
   
   clearChatBtn.addEventListener('click', clearChat);
+  
+  toggleLanguageBtn.addEventListener('click', handleLanguageToggle);
+}
+
+/**
+ * Handle language toggle
+ */
+async function handleLanguageToggle() {
+  const newLang = await toggleLanguage();
+  applyTranslations();
+  
+  // Show feedback
+  const feedback = newLang === 'de' ? '🇩🇪 Deutsch' : '🇬🇧 English';
+  toggleLanguageBtn.textContent = feedback;
+  setTimeout(() => {
+    toggleLanguageBtn.textContent = '🌐';
+  }, 1500);
 }
 
 /**
@@ -127,7 +167,7 @@ function autoResizeTextarea() {
 function updateModelBadge() {
   if (!settings.apiKey) {
     modelBadge.classList.add('no-model');
-    currentModelSpan.textContent = 'No API key configured';
+    currentModelSpan.textContent = t('noApiKey');
   } else {
     modelBadge.classList.remove('no-model');
     const modelName = settings.model.split('/').pop();
@@ -166,7 +206,7 @@ async function handleSend() {
   if (!text) return;
   
   if (!settings.apiKey) {
-    showError('Please add your OpenRouter API key in Settings first.');
+    showError(t('errorNoApiKey'));
     return;
   }
   
@@ -176,7 +216,7 @@ async function handleSend() {
   sendBtn.disabled = true;
   
   try {
-    showLoading(true, 'Capturing screenshot...');
+    showLoading(true, t('capturingScreenshot'));
     
     const screenshotResult = await chrome.runtime.sendMessage({ action: 'captureScreenshot' });
     
@@ -200,7 +240,7 @@ async function handleSend() {
     
     chatHistory.push(userMessage);
     
-    showLoading(true, 'Thinking...');
+    showLoading(true, t('thinking'));
     
     const typingIndicator = addTypingIndicator();
     
@@ -221,7 +261,7 @@ async function handleSend() {
       throw new Error(apiResult.error || 'API request failed');
     }
     
-    const assistantContent = apiResult.response.choices?.[0]?.message?.content || 'No response received';
+    const assistantContent = apiResult.response.choices?.[0]?.message?.content || t('noResponse');
     
     const assistantMessage = {
       role: 'assistant',
@@ -243,82 +283,13 @@ async function handleSend() {
   }
 }
 
-// Default system prompt (Tutor mode)
-const DEFAULT_PROMPT = `You are CowPilot Tutor 🐄✈️ — a world-class mentor inside a Chrome extension.
-
-═══════════════════════════════════════════════════════════════════════════════
-WHAT MAKES YOU EXCEPTIONAL
-═══════════════════════════════════════════════════════════════════════════════
-
-You don't just answer questions. You analyze the full situation, understand the user's actual goal (not just what they asked), identify the most efficient path forward, and deliver guidance so clear and actionable that the user knows exactly what to do next.
-
-Your responses feel like getting advice from a brilliant friend who happens to be an expert in whatever you're looking at. No jargon unless necessary. No condescension. No fluff. Just sharp, practical wisdom.
-
-═══════════════════════════════════════════════════════════════════════════════
-YOUR CONTEXT
-═══════════════════════════════════════════════════════════════════════════════
-
-• Every message from the user includes a LIVE SCREENSHOT of their current browser tab
-• You see exactly what they see — every button, error, form field, line of code
-• You have the full conversation history with all previous screenshots
-• You can track their progress and understand their journey
-
-This is your superpower: you have visual context. Use it. Reference specific things you see. Don't make the user explain what's already visible.
-
-═══════════════════════════════════════════════════════════════════════════════
-YOUR ANALYSIS PROCESS (internal, don't show this)
-═══════════════════════════════════════════════════════════════════════════════
-
-Before responding, silently work through:
-
-1. OBSERVE: What exactly is on the screen? What is the user looking at?
-2. INTERPRET: What are they trying to accomplish? What's the real goal behind their question?
-3. ASSESS: What's blocking them? Is it a knowledge gap, a technical issue, a wrong approach?
-4. STRATEGIZE: What are ALL the possible solutions? Which is fastest? Which is most robust?
-5. SIMPLIFY: How do I explain this so clearly that they can't possibly misunderstand?
-6. SEQUENCE: What are the exact next 3 physical actions they should take?
-
-═══════════════════════════════════════════════════════════════════════════════
-YOUR RESPONSE FORMAT
-═══════════════════════════════════════════════════════════════════════════════
-
-Keep responses SHORT but COMPLETE. Structure them like this:
-
-1. **One sentence** that shows you understand what they're trying to do
-2. **The insight or answer** — the key thing they need to know
-3. **Next 3 Steps** — exactly what to do, so specific they can follow blindly:
-   → Step 1: [Concrete action with specifics from the screenshot]
-   → Step 2: [The immediate next action after that]
-   → Step 3: [The action that completes this phase]
-
-That's it. Three steps maximum. If solving the full problem requires more, just give the first three. They'll come back for the next three.
-
-═══════════════════════════════════════════════════════════════════════════════
-QUALITY STANDARDS
-═══════════════════════════════════════════════════════════════════════════════
-
-✓ Reference specific UI elements, buttons, or text you see in the screenshot
-✓ Use their exact terminology (if they say "thingy", you can say "thingy")
-✓ If something is unclear, ask ONE surgical question — not a list of questions
-✓ Match their language (German → German, English → English, casual → casual)
-✓ If they're about to make a mistake, warn them clearly but kindly
-✓ Celebrate small wins — a simple "Nice, that worked!" goes a long way
-
-✗ Never give vague advice like "you should consider..." or "it depends..."
-✗ Never list 10 options when 1 is clearly best
-✗ Never explain concepts they already understand
-✗ Never ignore what's visible in the screenshot
-✗ Never make them feel stupid for asking
-
-═══════════════════════════════════════════════════════════════════════════════
-YOUR PERSONALITY
-═══════════════════════════════════════════════════════════════════════════════
-
-You're the friend everyone wishes they had: smart, helpful, patient, and genuinely invested in their success. You're not a search engine. You're not a manual. You're a thinking partner who happens to see their screen.
-
-Be warm but efficient. Be expert but humble. Be thorough but concise.
-
-Make them feel like they have an unfair advantage.`;
+/**
+ * Get default prompt for current language
+ */
+function getDefaultPrompt() {
+  const lang = getCurrentLanguage();
+  return getPromptForMode('tutor', lang);
+}
 
 /**
  * Prepare messages for API (with system prompt)
@@ -326,7 +297,7 @@ Make them feel like they have an unfair advantage.`;
 function prepareMessagesForAPI() {
   const systemMessage = {
     role: 'system',
-    content: activePrompt || DEFAULT_PROMPT
+    content: activePrompt || getDefaultPrompt()
   };
   
   const historyMessages = chatHistory.map(msg => {
@@ -415,7 +386,7 @@ function showError(message) {
 function showLoading(show, text = '') {
   if (show) {
     loadingOverlay.classList.add('active');
-    loadingOverlay.querySelector('span').textContent = text;
+    document.getElementById('loadingText').textContent = text;
   } else {
     loadingOverlay.classList.remove('active');
   }
@@ -432,7 +403,7 @@ function scrollToBottom() {
  * Clear chat history
  */
 async function clearChat() {
-  if (confirm('Clear all chat history?')) {
+  if (confirm(t('clearChatConfirm'))) {
     chatHistory = [];
     await chrome.storage.local.remove(['chatHistory']);
     
@@ -441,9 +412,9 @@ async function clearChat() {
     chatContainer.innerHTML = `
       <div class="welcome-message" id="welcomeMessage">
         <div class="welcome-icon">🐄✈️</div>
-        <h2>Welcome to CowPilot!</h2>
-        <p>Your friendly AI co-pilot that sees your screen and helps you navigate anything.</p>
-        <p class="hint">🐄 First, click ⚙️ to add your OpenRouter API key!</p>
+        <h2 id="welcomeTitle">${t('welcomeTitle')}</h2>
+        <p id="welcomeText">${t('welcomeText')}</p>
+        <p class="hint" id="welcomeHint">${t('welcomeHint')}</p>
         <img src="icons/cowpilot.png" alt="CowPilot" class="welcome-logo">
       </div>
     `;
@@ -552,5 +523,8 @@ chrome.storage.onChanged.addListener((changes) => {
   if (changes.activePrompt) {
     activePrompt = changes.activePrompt.newValue || '';
   }
+  if (changes.language) {
+    window._cowpilotLanguage = changes.language.newValue || 'en';
+    applyTranslations();
+  }
 });
-

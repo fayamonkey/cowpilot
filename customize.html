@@ -14,10 +14,13 @@
         <span class="logo-icon">🐄✈️</span>
         <div class="logo-text-container">
           <span class="logo-text">CowPilot</span>
-          <span class="logo-tagline">The Better Co-Pilot</span>
+          <span class="logo-tagline" id="tagline">The Better Co-Pilot</span>
         </div>
       </div>
-      <span class="header-subtitle">Customize</span>
+      <div class="header-right">
+        <button id="toggleLanguage" class="lang-btn" title="Language">🌐</button>
+        <span class="header-subtitle" id="headerSubtitle">Customize</span>
+      </div>
     </header>
 
     <main class="customize-content">
@@ -25,9 +28,9 @@
       <section class="customize-section">
         <h2 class="section-title">
           <span class="section-icon">🎭</span>
-          Personality Modes
+          <span id="sectionTitleModes">Personality Modes</span>
         </h2>
-        <p class="section-description">
+        <p class="section-description" id="sectionDescModes">
           Choose a preset personality or create your own custom prompt
         </p>
         
@@ -40,16 +43,16 @@
       <section class="customize-section">
         <h2 class="section-title">
           <span class="section-icon">✏️</span>
-          System Prompt
+          <span id="sectionTitlePrompt">System Prompt</span>
         </h2>
-        <p class="section-description">
+        <p class="section-description" id="sectionDescPrompt">
           This is what CowPilot knows about itself. Edit to customize its behavior.
         </p>
         
         <div class="prompt-editor">
           <textarea id="promptEditor" placeholder="Enter your custom system prompt..."></textarea>
           <div class="prompt-stats">
-            <span id="charCount">0</span> characters
+            <span id="charCount">0</span> <span id="charLabel">characters</span>
           </div>
         </div>
       </section>
@@ -58,7 +61,7 @@
       <section class="customize-section tips-section">
         <div class="info-card">
           <span class="info-icon">💡</span>
-          <div class="info-content">
+          <div class="info-content" id="tipsContent">
             <strong>Prompt Tips:</strong>
             <ul>
               <li>Be specific about the personality and tone you want</li>
@@ -74,11 +77,11 @@
       <div class="button-group">
         <button id="resetBtn" class="reset-btn">
           <span class="btn-icon">↩️</span>
-          Reset to Default
+          <span id="resetLabel">Reset to Default</span>
         </button>
         <button id="saveBtn" class="save-btn">
           <span class="btn-icon">💾</span>
-          Save Changes
+          <span id="saveLabel">Save Changes</span>
         </button>
       </div>
 
@@ -92,7 +95,7 @@
     </footer>
   </div>
 
+  <script src="i18n.js"></script>
   <script src="customize.js"></script>
 </body>
 </html>
-
