@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CowPilot</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🐄✈️</span>
+        <div class="logo-text-container">
+          <span class="logo-text">CowPilot</span>
+          <span class="logo-tagline">The Better Co-Pilot</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="clearChat" class="icon-btn" title="Clear chat">🗑️</button>
+        <button id="openSettings" class="icon-btn" title="Settings">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Active Model Display -->
+    <div class="model-badge" id="modelBadge">
+      <span class="model-dot"></span>
+      <span id="currentModel">No model selected</span>
+    </div>
+
+    <!-- Chat Messages Container -->
+    <div class="chat-container" id="chatContainer">
+      <div class="welcome-message" id="welcomeMessage">
+        <div class="welcome-icon">🐄✈️</div>
+        <h2>Welcome to CowPilot!</h2>
+        <p>Your friendly AI co-pilot that sees your screen and helps you navigate anything.</p>
+        <p class="hint">🐄 First, click ⚙️ to add your OpenRouter API key!</p>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area">
+      <div class="screenshot-indicator" id="screenshotIndicator">
+        <span class="screenshot-icon">📸</span>
+        <span>Screenshot included with each message</span>
+      </div>
+      <div class="input-wrapper">
+        <textarea 
+          id="messageInput" 
+          placeholder="Ask about what you see..."
+          rows="2"
+        ></textarea>
+        <button id="sendBtn" class="send-btn" title="Send">
+          <span class="send-icon">➤</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <span>Capturing screenshot...</span>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
+

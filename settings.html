@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CowPilot - Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🐄✈️</span>
+        <div class="logo-text-container">
+          <span class="logo-text">CowPilot</span>
+          <span class="logo-tagline">The Better Co-Pilot</span>
+        </div>
+      </div>
+      <span class="header-subtitle">Settings</span>
+    </header>
+
+    <!-- Settings Form -->
+    <main class="settings-content">
+      <!-- API Key Section -->
+      <section class="settings-section">
+        <h2 class="section-title">
+          <span class="section-icon">🔑</span>
+          OpenRouter API Key
+        </h2>
+        <p class="section-description">
+          Get your API key from <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai</a>
+        </p>
+        <div class="input-group">
+          <input 
+            type="password" 
+            id="apiKey" 
+            placeholder="sk-or-v1-..."
+            autocomplete="off"
+          >
+          <button type="button" id="toggleApiKey" class="toggle-btn" title="Show/Hide">
+            👁️
+          </button>
+        </div>
+      </section>
+
+      <!-- Model Selection Section -->
+      <section class="settings-section">
+        <h2 class="section-title">
+          <span class="section-icon">🤖</span>
+          AI Model
+        </h2>
+        <p class="section-description">
+          Vision models loaded from OpenRouter with live pricing
+        </p>
+        <div class="model-select-wrapper">
+          <div class="input-group">
+            <select id="modelSelect">
+              <option value="">Enter API key and load models...</option>
+            </select>
+          </div>
+          <button type="button" id="loadModelsBtn" class="load-btn" title="Refresh models">
+            🔄 Load Models
+          </button>
+        </div>
+        <div class="models-loading" id="modelsLoading" style="display: none;">
+          <div class="mini-spinner"></div>
+          <span>Loading models from OpenRouter...</span>
+        </div>
+      </section>
+
+      <!-- Info -->
+      <section class="settings-section model-info">
+        <div class="info-card">
+          <span class="info-icon">💡</span>
+          <div class="info-content">
+            <strong>Pricing Info:</strong>
+            <p>Prices shown are per million tokens. "in" = input/prompt, "out" = output/completion.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Save Button -->
+      <div class="button-group">
+        <button id="saveBtn" class="save-btn">
+          <span class="btn-icon">💾</span>
+          Save Settings
+        </button>
+      </div>
+
+      <!-- Status Message -->
+      <div class="status-message" id="statusMessage"></div>
+
+      <!-- Privacy & Security -->
+      <section class="settings-section about-section">
+        <h2 class="section-title">
+          <span class="section-icon">🔒</span>
+          Privacy & Security
+        </h2>
+        <div class="privacy-list">
+          <div class="privacy-item">
+            <span class="privacy-icon">💾</span>
+            <div>
+              <strong>Local Storage Only</strong>
+              <p>All data is stored in your browser's local storage. Nothing is sent to external servers except OpenRouter.</p>
+            </div>
+          </div>
+          <div class="privacy-item">
+            <span class="privacy-icon">🔐</span>
+            <div>
+              <strong>Your API Key, Your Privacy</strong>
+              <p>Your OpenRouter API key stays private. It's stored locally and only used to communicate with OpenRouter.</p>
+            </div>
+          </div>
+          <div class="privacy-item">
+            <span class="privacy-icon">📸</span>
+            <div>
+              <strong>Screenshots</strong>
+              <p>Screenshots are sent directly to the AI model you choose. They are not stored or processed by us.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About -->
+      <section class="settings-section about-section">
+        <h2 class="section-title">
+          <span class="section-icon">🐄</span>
+          About CowPilot
+        </h2>
+        <div class="about-content">
+          <p class="about-tagline">"The Better Co-Pilot"</p>
+          <p class="about-story">
+            Built because we needed something more reliable than existing AI copilots. 
+            CowPilot sees your screen and actually helps — no fluff, just answers.
+          </p>
+          
+          <div class="about-developer">
+            <strong>Developer</strong>
+            <p class="developer-name">Dirk Wonhoefer</p>
+            <p class="developer-company">AI Engineering</p>
+            <a href="mailto:dirk@ai-engineering.ai" class="developer-email">dirk@ai-engineering.ai</a>
+          </div>
+
+          <div class="about-opensource">
+            <span class="opensource-icon">⭐</span>
+            <div>
+              <strong>Open Source</strong>
+              <p>This project is open source. Star it on GitHub!</p>
+              <a href="https://github.com/dirkwonhoefer/cowpilot" target="_blank" class="github-link">
+                View on GitHub →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>CowPilot v1.0.0 • Open Source • Made with 🐄💙</p>
+      <p class="footer-sub">© 2024 AI Engineering • Dirk Wonhoefer</p>
+    </footer>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>

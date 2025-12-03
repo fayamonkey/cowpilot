@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CowPilot Icon Resizer</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(135deg, #1a1d24 0%, #232830 100%);
+      color: #f5f0eb;
+      padding: 40px;
+      text-align: center;
+      min-height: 100vh;
+    }
+    h1 { margin-bottom: 10px; color: #f5e6d3; }
+    .subtitle { color: #a8a095; margin-bottom: 30px; }
+    
+    .upload-area {
+      background: #2d333d;
+      border: 2px dashed rgba(196, 165, 116, 0.3);
+      border-radius: 14px;
+      padding: 40px;
+      max-width: 400px;
+      margin: 0 auto 30px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .upload-area:hover {
+      border-color: #c4a574;
+      background: #353d4a;
+    }
+    .upload-area input {
+      display: none;
+    }
+    .upload-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .preview {
+      margin: 20px auto;
+      max-width: 200px;
+    }
+    .preview img {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    .canvases {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 30px 0;
+    }
+    .canvas-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      background: #2d333d;
+      padding: 20px;
+      border-radius: 14px;
+      border: 1px solid rgba(196, 165, 116, 0.2);
+    }
+    .canvas-wrapper canvas {
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .canvas-wrapper span {
+      color: #a8a095;
+      font-size: 13px;
+    }
+    button {
+      background: linear-gradient(135deg, #4a90b8, #3a7a9e);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    button:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 144, 184, 0.3);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .download-all {
+      background: linear-gradient(135deg, #c4a574, #a08050);
+      padding: 16px 32px;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    
+    .instructions {
+      background: #232830;
+      padding: 24px;
+      border-radius: 14px;
+      max-width: 500px;
+      margin: 30px auto;
+      text-align: left;
+      border: 1px solid rgba(196, 165, 116, 0.15);
+    }
+    .instructions h3 { color: #c4a574; margin-bottom: 12px; }
+    .instructions ol { padding-left: 20px; color: #a8a095; }
+    .instructions li { margin: 10px 0; }
+    .instructions code { 
+      background: #1a1d24; 
+      padding: 2px 8px; 
+      border-radius: 4px;
+      color: #6bb3d9;
+    }
+    
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <h1>🐄✈️ CowPilot Icon Resizer</h1>
+  <p class="subtitle">Upload your cowpilot.png and I'll create all the icon sizes you need</p>
+  
+  <div class="upload-area" id="uploadArea">
+    <div class="upload-icon">📁</div>
+    <p>Click to upload cowpilot.png</p>
+    <p style="font-size: 12px; color: #6b635a;">or drag & drop</p>
+    <input type="file" id="fileInput" accept="image/*">
+  </div>
+  
+  <div class="preview hidden" id="preview">
+    <p style="color: #a8a095; margin-bottom: 10px;">Original:</p>
+    <img id="previewImg" src="" alt="Preview">
+  </div>
+  
+  <div class="canvases hidden" id="canvases"></div>
+  
+  <button class="download-all hidden" id="downloadAll">
+    📥 Download All Icons
+  </button>
+  
+  <div class="instructions">
+    <h3>📋 Instructions:</h3>
+    <ol>
+      <li>Upload your <code>cowpilot.png</code> image above</li>
+      <li>Click "Download All Icons" to get all 4 sizes</li>
+      <li>Move the downloaded icons to the <code>icons/</code> folder, replacing the old ones</li>
+      <li>Reload the extension in <code>chrome://extensions</code></li>
+    </ol>
+  </div>
+
+  <script>
+    const sizes = [16, 32, 48, 128];
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const previewImg = document.getElementById('previewImg');
+    const canvasesDiv = document.getElementById('canvases');
+    const downloadAllBtn = document.getElementById('downloadAll');
+    
+    let canvases = {};
+    
+    uploadArea.addEventListener('click', () => fileInput.click());
+    
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = '#c4a574';
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.style.borderColor = 'rgba(196, 165, 116, 0.3)';
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.style.borderColor = 'rgba(196, 165, 116, 0.3)';
+      if (e.dataTransfer.files.length) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) {
+        handleFile(e.target.files[0]);
+      }
+    });
+    
+    function handleFile(file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          previewImg.src = e.target.result;
+          preview.classList.remove('hidden');
+          createResizedIcons(img);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    function createResizedIcons(img) {
+      canvasesDiv.innerHTML = '';
+      canvasesDiv.classList.remove('hidden');
+      downloadAllBtn.classList.remove('hidden');
+      canvases = {};
+      
+      sizes.forEach(size => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'canvas-wrapper';
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        canvas.style.width = Math.max(size, 48) + 'px';
+        canvas.style.height = Math.max(size, 48) + 'px';
+        
+        const ctx = canvas.getContext('2d');
+        
+        // Draw with smooth scaling
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Calculate scaling to fit and center
+        const scale = Math.min(size / img.width, size / img.height);
+        const w = img.width * scale;
+        const h = img.height * scale;
+        const x = (size - w) / 2;
+        const y = (size - h) / 2;
+        
+        ctx.drawImage(img, x, y, w, h);
+        
+        canvases[size] = canvas;
+        
+        const label = document.createElement('span');
+        label.textContent = `icon${size}.png (${size}×${size})`;
+        
+        const btn = document.createElement('button');
+        btn.textContent = `Download`;
+        btn.onclick = () => downloadCanvas(canvas, size);
+        
+        wrapper.appendChild(canvas);
+        wrapper.appendChild(label);
+        wrapper.appendChild(btn);
+        canvasesDiv.appendChild(wrapper);
+      });
+    }
+    
+    function downloadCanvas(canvas, size) {
+      const link = document.createElement('a');
+      link.download = `icon${size}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+    
+    downloadAllBtn.addEventListener('click', () => {
+      sizes.forEach((size, i) => {
+        setTimeout(() => {
+          downloadCanvas(canvases[size], size);
+        }, i * 200);
+      });
+    });
+  </script>
+</body>
+</html>
+

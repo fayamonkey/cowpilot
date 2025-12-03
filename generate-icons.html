@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CowPilot Icon Generator</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(135deg, #1a1d24 0%, #232830 100%);
+      color: #f5f0eb;
+      padding: 40px;
+      text-align: center;
+      min-height: 100vh;
+    }
+    h1 { margin-bottom: 10px; color: #f5e6d3; }
+    .subtitle { color: #a8a095; margin-bottom: 30px; }
+    .canvases {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 30px 0;
+    }
+    .canvas-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      background: #2d333d;
+      padding: 20px;
+      border-radius: 14px;
+      border: 1px solid rgba(196, 165, 116, 0.2);
+    }
+    canvas {
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    button {
+      background: linear-gradient(135deg, #4a90b8, #3a7a9e);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    button:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 144, 184, 0.3);
+    }
+    .instructions {
+      background: #232830;
+      padding: 24px;
+      border-radius: 14px;
+      max-width: 600px;
+      margin: 30px auto;
+      text-align: left;
+      border: 1px solid rgba(196, 165, 116, 0.15);
+    }
+    .instructions h3 { color: #c4a574; margin-bottom: 12px; }
+    .instructions ol { padding-left: 20px; color: #a8a095; }
+    .instructions li { margin: 10px 0; }
+    .instructions code { 
+      background: #1a1d24; 
+      padding: 2px 8px; 
+      border-radius: 4px;
+      color: #6bb3d9;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐄✈️ CowPilot Icon Generator</h1>
+  <p class="subtitle">Click download to save each icon, then move them to the <code>icons/</code> folder</p>
+  
+  <div class="canvases" id="canvases"></div>
+  
+  <div class="instructions">
+    <h3>📋 Instructions:</h3>
+    <ol>
+      <li>Download all 4 icons below</li>
+      <li>Save them in the <code>icons/</code> folder of your extension</li>
+      <li>Also save your CowPilot logo image as <code>logo.png</code> in the extension root folder</li>
+      <li>Reload the extension in <code>chrome://extensions</code></li>
+    </ol>
+  </div>
+
+  <script>
+    const sizes = [16, 32, 48, 128];
+    
+    function drawCowIcon(ctx, size) {
+      const s = size;
+      
+      // Background - sky blue circle
+      const bgGrad = ctx.createRadialGradient(s/2, s/2, 0, s/2, s/2, s/2);
+      bgGrad.addColorStop(0, '#6bb3d9');
+      bgGrad.addColorStop(1, '#4a90b8');
+      ctx.beginPath();
+      ctx.arc(s/2, s/2, s/2 - 1, 0, Math.PI * 2);
+      ctx.fillStyle = bgGrad;
+      ctx.fill();
+      
+      // Cow face - brown
+      const faceY = s * 0.52;
+      const faceW = s * 0.55;
+      const faceH = s * 0.45;
+      ctx.beginPath();
+      ctx.ellipse(s/2, faceY, faceW/2, faceH/2, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#8b6914';
+      ctx.fill();
+      
+      // White patch on face
+      ctx.beginPath();
+      ctx.ellipse(s/2, faceY + faceH*0.1, faceW*0.35, faceH*0.35, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      
+      // Snout - pink
+      const snoutY = faceY + faceH * 0.2;
+      ctx.beginPath();
+      ctx.ellipse(s/2, snoutY, s*0.18, s*0.12, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#f0b8b8';
+      ctx.fill();
+      
+      // Nostrils
+      const nostrilY = snoutY + s*0.02;
+      ctx.fillStyle = '#c49090';
+      ctx.beginPath();
+      ctx.ellipse(s/2 - s*0.06, nostrilY, s*0.025, s*0.02, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(s/2 + s*0.06, nostrilY, s*0.025, s*0.02, 0, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Ears
+      ctx.fillStyle = '#8b6914';
+      // Left ear
+      ctx.beginPath();
+      ctx.ellipse(s*0.22, s*0.38, s*0.1, s*0.07, -0.5, 0, Math.PI * 2);
+      ctx.fill();
+      // Right ear
+      ctx.beginPath();
+      ctx.ellipse(s*0.78, s*0.38, s*0.1, s*0.07, 0.5, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Horns
+      ctx.fillStyle = '#f5e6d3';
+      // Left horn
+      ctx.beginPath();
+      ctx.moveTo(s*0.32, s*0.28);
+      ctx.quadraticCurveTo(s*0.22, s*0.12, s*0.28, s*0.08);
+      ctx.quadraticCurveTo(s*0.36, s*0.14, s*0.38, s*0.28);
+      ctx.fill();
+      // Right horn
+      ctx.beginPath();
+      ctx.moveTo(s*0.68, s*0.28);
+      ctx.quadraticCurveTo(s*0.78, s*0.12, s*0.72, s*0.08);
+      ctx.quadraticCurveTo(s*0.64, s*0.14, s*0.62, s*0.28);
+      ctx.fill();
+      
+      // Goggles strap
+      ctx.strokeStyle = '#5c4033';
+      ctx.lineWidth = Math.max(1, s * 0.035);
+      ctx.beginPath();
+      ctx.moveTo(s*0.18, s*0.42);
+      ctx.lineTo(s*0.82, s*0.42);
+      ctx.stroke();
+      
+      // Goggle frames
+      const goggleY = s * 0.4;
+      const goggleR = s * 0.12;
+      
+      // Left goggle frame
+      ctx.beginPath();
+      ctx.arc(s*0.35, goggleY, goggleR + s*0.02, 0, Math.PI * 2);
+      ctx.fillStyle = '#5c4033';
+      ctx.fill();
+      
+      // Right goggle frame
+      ctx.beginPath();
+      ctx.arc(s*0.65, goggleY, goggleR + s*0.02, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Goggle lenses
+      const lensGrad = ctx.createRadialGradient(s*0.35, goggleY - s*0.02, 0, s*0.35, goggleY, goggleR);
+      lensGrad.addColorStop(0, '#a8d4f0');
+      lensGrad.addColorStop(1, '#6bb3d9');
+      
+      ctx.beginPath();
+      ctx.arc(s*0.35, goggleY, goggleR, 0, Math.PI * 2);
+      ctx.fillStyle = lensGrad;
+      ctx.fill();
+      
+      const lensGrad2 = ctx.createRadialGradient(s*0.65, goggleY - s*0.02, 0, s*0.65, goggleY, goggleR);
+      lensGrad2.addColorStop(0, '#a8d4f0');
+      lensGrad2.addColorStop(1, '#6bb3d9');
+      
+      ctx.beginPath();
+      ctx.arc(s*0.65, goggleY, goggleR, 0, Math.PI * 2);
+      ctx.fillStyle = lensGrad2;
+      ctx.fill();
+      
+      // Lens highlights
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.beginPath();
+      ctx.arc(s*0.32, goggleY - s*0.04, s*0.03, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(s*0.62, goggleY - s*0.04, s*0.03, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    const container = document.getElementById('canvases');
+    
+    sizes.forEach(size => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'canvas-wrapper';
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      canvas.style.width = Math.max(size, 64) + 'px';
+      canvas.style.height = Math.max(size, 64) + 'px';
+      
+      const ctx = canvas.getContext('2d');
+      drawCowIcon(ctx, size);
+      
+      const label = document.createElement('span');
+      label.textContent = `${size}×${size}px`;
+      label.style.color = '#a8a095';
+      
+      const btn = document.createElement('button');
+      btn.textContent = `Download icon${size}.png`;
+      btn.onclick = () => {
+        const link = document.createElement('a');
+        link.download = `icon${size}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      };
+      
+      wrapper.appendChild(canvas);
+      wrapper.appendChild(label);
+      wrapper.appendChild(btn);
+      container.appendChild(wrapper);
+    });
+  </script>
+</body>
+</html>
